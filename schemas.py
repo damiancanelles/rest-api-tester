@@ -7,8 +7,8 @@ class KeyValue(BaseModel):
 
 class RequestResponseBase(BaseModel):
     method: str
-    headers: list[KeyValue] = []
-    params: list[KeyValue] = []
+    headers: list[object] = []
+    params: list[object] = []
     body: object = {}
 
 class AppBase(BaseModel):
@@ -46,6 +46,3 @@ class App(AppBase):
 
     class Config:
         orm_mode = True
-
-
-

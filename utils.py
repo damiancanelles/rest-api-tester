@@ -22,7 +22,7 @@ def test_request(request: schemas.Request):
 
     if request.body['method'] == 'GET':
         test = requests.get(request.url, params=params_object, headers=headers_object)
-    elif request['method'] == 'POST':
+    elif request.body['method'] == 'POST':
         test = requests.post(request.url, data=request.body['body'], params=params_object, headers=headers_object)
     elif request.body['method'] == 'PUT':
         test = requests.put(request.url, data=request.body['body'], params=params_object, headers=headers_object)
