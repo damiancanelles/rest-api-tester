@@ -34,7 +34,6 @@ class Test(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     passed = Column(Boolean, index=True)
-    response = Column(JSONB, index=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     request_id = Column(Integer, ForeignKey("requests.id"))
