@@ -16,7 +16,9 @@ class AppBase(BaseModel):
 
 class RequestBase(BaseModel):
     url: str
+    name: str
     description: str
+    frecuency: str
     body: RequestResponseBase
     seach_params: list[object]
 

@@ -18,6 +18,9 @@ class Request(Base):
     __tablename__ = "requests"
 
     id = Column(Integer, primary_key=True, index=True)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    frecuency = Column(String, index=True)
+    name = Column(String, index=True)
     description = Column(String, index=True)
     url = Column(String, index=True)
     body = Column(JSONB)
