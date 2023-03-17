@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DB_CONNECTION_STR","postgresql://postgres:313ctr0Slayer12@127.0.0.1:5433/tester-database")
+SQLALCHEMY_DATABASE_URL = os.getenv("DB_CONNECTION_STR","mssql+pyodbc://sa:313ctr0Slayer12@db/api_tester_db?driver=ODBC+Driver+17+for+SQL+Server")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={}
