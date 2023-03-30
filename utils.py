@@ -3,11 +3,7 @@ import schemas
 def test_request(request: schemas.Request):
     import requests
     import json
-    passed = False
-
-    """
-        Here we create the params and header objects from the list of key values that the client provide.
-    """
+    passed = True
 
     headers_object = {}
     params_object = {}
@@ -15,10 +11,6 @@ def test_request(request: schemas.Request):
         headers_object[header['key']] = header['value']
     for param in request.body['params']:
         params_object[param['key']] = param['value']
-
-    """
-        Here we identify wich method is define in the request and execute the correct function
-    """
 
     if request.body['method'] == 'GET':
         test = requests.get(request.url, params=params_object, headers=headers_object)
@@ -31,39 +23,32 @@ def test_request(request: schemas.Request):
     elif request.body['method'] == 'DELETE':
         test = requests.delete(request.url, data=request.body['body'], params=params_object, headers=headers_object)
 
-    """
-        Here extract the data from the response object (for now we only save json responses).
-    """
-
-    response_data = test.content
+    response_data = test.text
+    response_headers = test.headers
     status = test.status_code
     try:
-        response_data_json = json.loads(response_data)
+        response_data_json = json.loads(test.content)
     except:
         response_data_json = {}
 
-    """
-        Here perform the seach in the response of the search params.
-    """
-
     for search_param in json.loads(request.search_params):
-        if search_param['key'] == "status":
-            if int(search_param['value']) == status:
-                passed = True
-            else:
-                passed = False
-        elif search_param['key'] == "all":
-            if not search_param['value'] in response_data:
-                passed = True
-            else:
-                passed = False
-        elif search_param['key'] == "prop":
-            if not search_param['key'] in response_data_json:
-                if response_data_json[search_param['key']] == search_param['value']:
-                    passed = True
-                else:
-                    passed = False
-            else:
+
+        if search_param['key'] == "status" and search_param['relation'] == "igual":
+            if not int(search_param['value']) == status:
                 passed = False
 
-        return passed, response_data_json
+        elif search_param['key'] == "body" and search_param['relation'] == "igual":
+            if not search_param['value'] == response_data:
+                passed = False
+        elif search_param['key'] == "body" and search_param['relation'] == "contiene":
+            if not search_param['value'] in response_data:
+                passed = False
+
+        elif search_param['key'] == "headers" and search_param['relation'] == "igual":
+            if not search_param['value'] == response_headers:
+                passed = False
+        elif search_param['key'] == "headers" and search_param['relation'] == "contiene":
+            if not search_param['value'] in response_headers:
+                passed = False
+
+    return passed, response_data_json

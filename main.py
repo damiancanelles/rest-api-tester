@@ -1,10 +1,12 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, BackgroundTasks
+import time
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 import services
 import models
 import schemas
+import utils
 from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
@@ -25,6 +27,26 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def daily_test(db: Session = Depends(get_db)):
+    """
+    Esta función se ejecutará cada 24 horas.
+    """
+    while True:
+        requests = services.get_requests_daily(db=db)
+        for request in requests:
+            passed, response = utils.test_request(request)
+            if passed == False:
+                print(f"La prueba con id {request.id} ha fallado")
+        time.sleep(24 * 60 * 60)
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Está función se ejecutara al iniciar la app.
+    """
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(daily_test)
 
 @app.post("/apps/", response_model=schemas.App)
 def create_app(app: schemas.AppBase, db: Session = Depends(get_db)):

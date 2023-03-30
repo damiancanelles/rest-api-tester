@@ -37,6 +37,8 @@ def get_requests(db: Session, skip: int = 0, limit: int = 100, app_id: int = 0):
     else:
         return db.query(models.Request).filter(models.Request.owner_id == app_id).all()
 
+def get_requests_daily(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Request).filter(models.Request.frecuency == "diario").all()
 def get_request(db: Session, request_id:int):
     return db.query(models.Request).filter(models.Request.id == request_id).first()
 
@@ -70,7 +72,7 @@ def get_tests(db: Session, skip: int = 0, limit: int = 100, request_id: int = 0)
     if request_id == 0:
         return db.query(models.Test).all()
     else:
-        return db.query(models.Test).filter(models.Test.request_id == request_id).order_by(models.Test.id.desc()).all()
+        return db.query(models.Test).filter(models.Test.request_id == request_id).order_by(models.Test.id.desc()).limit(5).all()
 def create_test(db: Session,request_id: int = 0):
     if request_id == 0:
         return None
