@@ -25,6 +25,7 @@ def test_request(request: schemas.Request):
 
     response_data = test.text
     response_headers = test.headers
+    response_timeout = test.elapsed.total_seconds()
     status = test.status_code
     try:
         response_data_json = json.loads(test.content)
@@ -49,6 +50,16 @@ def test_request(request: schemas.Request):
                 passed = False
         elif search_param['key'] == "headers" and search_param['relation'] == "contiene":
             if not search_param['value'] in response_headers:
+                passed = False
+
+        elif search_param['key'] == "timeout" and search_param['relation'] == "igual":
+            if not int(search_param['value']) == response_timeout:
+                passed = False
+        elif search_param['key'] == "timeout" and search_param['relation'] == "menor":
+            if not int(search_param['value']) > response_timeout:
+                passed = False
+        elif search_param['key'] == "timeout" and search_param['relation'] == "mayor":
+            if not int(search_param['value']) < response_timeout:
                 passed = False
 
     return passed, response_data_json
