@@ -46,7 +46,7 @@ def test_request(request: schemas.Request):
         Here perform the seach in the response of the search params.
     """
 
-    for search_param in request.seach_params:
+    for search_param in json.loads(request.search_params):
         if search_param['key'] == "status":
             if int(search_param['value']) == status:
                 passed = True

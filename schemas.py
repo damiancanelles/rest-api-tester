@@ -20,7 +20,7 @@ class RequestBase(BaseModel):
     description: str
     frecuency: str
     body: RequestResponseBase
-    seach_params: list[object]
+    search_params: str
 
 class TestBase(BaseModel):
     passed: bool
